@@ -4,8 +4,11 @@
   "description": "product management API REST system",
   "main": "app.js",
   "scripts": {
+    "start":"node ./src/app.js",
+    "dev":"node --watch ./src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "keywords": [],
   "author": "Leandro Luna",
   "license": "ISC",
