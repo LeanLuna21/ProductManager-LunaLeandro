@@ -83,7 +83,7 @@ app.delete("/productos/:id", async (req, res)=>{
     }
     
     try {
-        let product=await productManager.getProductById(id)
+        let product = await productManager.getProductById(id)
         if (!product){
             return res.status(404).send({ERROR:`product of id ${id} NOT FOUND.`})
         }
@@ -96,6 +96,26 @@ app.delete("/productos/:id", async (req, res)=>{
 })
 
 app.put("/productos/:id", async (req, res)=>{
+    let {id} = req.params
+    id = Number(id)
+
+    let productos = await productManager.getProducts()
+    let product = productos.find(prod => prod.id === productID)
+    let fields = req.body
+
+    if (isNaN(id)){
+        return res.status(400).send({ERROR:"product id must be number."})
+    }
+    if (!product){
+        return res.status(404).send({ERROR:`product of id ${id} NOT FOUND.`})
+    }
+    
+    try {
+        updatedProduct = await productManager.updateProduct(id, fields)
+        return res.status(204).send({CONFIRMATION:"Product updated!", product: updatedProduct})
+    } catch (error) {
+        return res.status(500).send({ERROR:"Internal server error..."})
+    }
 
 })
 

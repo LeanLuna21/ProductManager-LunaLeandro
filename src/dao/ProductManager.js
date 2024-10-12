@@ -62,7 +62,6 @@ export default class ProductManager{
         
         await fs.promises.writeFile(this.#path, JSON.stringify(productos, null, 4))
 
-        console.log(`Product ${productID} updated`)
         return product
     }
 
