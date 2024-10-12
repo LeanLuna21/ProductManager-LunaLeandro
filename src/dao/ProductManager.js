@@ -8,9 +8,6 @@ export default class ProductManager{
     
     async getProducts(){
         let check_file = fs.existsSync(this.#path)
-        // console.log(this.#path);
-        // console.log(check_file);
-
         if (check_file) {
             return JSON.parse(await fs.promises.readFile(this.#path, {encoding:"utf-8"}))
         } else {
@@ -18,25 +15,16 @@ export default class ProductManager{
         }
     }
 
-    async addProduct(title, description, price, thumbnail, code, stock){
-        // validar que no lleguen campos vacios
-        if (!title || !description || !price || !thumbnail || !code || !stock){
-            console.log(`Error: All fields are required to be complete.`)
-            return
-        }
-
+    async addProduct(title, description, code, price, status, stock, category, thumbnail){
         let productos = await this.getProducts()
-
-        // Validar que no se repita el campo “code” y que todos los campos sean obligatorios
-        if (productos.find(prod => prod.code === code)){
-            console.log(`Error: Product code ${code} already exists.`);
-            return
+        
+        let id=1
+        if(productos.length>0){
+            id=productos[productos.length - 1].id + 1
         }
-        // se crea con un id autoincrementable
-        let id = productos.length+1
 
-        let newProduct = {id, title, description, price, thumbnail, code, stock}
-    
+        let newProduct = {id, title, description, code, price, status, stock, category, thumbnail}
+
         productos.push(newProduct)
         
         await fs.promises.writeFile(this.#path, JSON.stringify(productos, null, 4))
@@ -80,16 +68,10 @@ export default class ProductManager{
 
     async deleteProduct(productID){
         let productos = await this.getProducts()
-        let productIndex = await this.#checkProductID(productID)
-        if (productIndex === -1){
-            console.log(`Error: Product does not exist.`)
-            return
-        }
         productos = productos.filter(prod => prod.id !== productID)
-    
+        
         await fs.promises.writeFile(this.#path, JSON.stringify(productos, null, 4))
-        console.log('Product deleted!')
 
-        return
+        return productos
     }
 }

@@ -1,6 +1,13 @@
 [
     {
-        "id":1,
-        "name":"prod-1"
+        "id": 1,
+        "title": "producto prueba2",
+        "description": "Este es un producto prueba",
+        "code": "abc123",
+        "price": 200,
+        "status": "true",
+        "stock": "25",
+        "category": "categoryA",
+        "thumbnail": "Sin imagen"
     }
 ]
