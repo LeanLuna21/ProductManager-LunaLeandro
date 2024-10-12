@@ -100,7 +100,7 @@ app.put("/productos/:id", async (req, res)=>{
     id = Number(id)
 
     let productos = await productManager.getProducts()
-    let product = productos.find(prod => prod.id === productID)
+    let product = productos.find(prod => prod.id === id)
     let fields = req.body
 
     if (isNaN(id)){
@@ -111,10 +111,10 @@ app.put("/productos/:id", async (req, res)=>{
     }
     
     try {
-        updatedProduct = await productManager.updateProduct(id, fields)
-        return res.status(204).send({CONFIRMATION:"Product updated!", product: updatedProduct})
-    } catch (error) {
-        return res.status(500).send({ERROR:"Internal server error..."})
+        await productManager.updateProduct(id, fields)
+        return res.status(200).send({CONFIRMATION:`Product ${id} updated!`})
+    } catch (err) {
+        return res.status(500).send({ERROR:"Internal server error...", error:err})
     }
 
 })

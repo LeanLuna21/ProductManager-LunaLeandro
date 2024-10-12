@@ -24,7 +24,7 @@
     {
         "id": 3,
         "title": "producto prueba3",
-        "description": "Este es un producto prueba",
+        "description": "producto3 updated description",
         "code": "abc345",
         "price": 200,
         "status": "true",
