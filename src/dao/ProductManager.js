@@ -51,10 +51,7 @@ export default class ProductManager{
     async updateProduct(productID, newFields){
         let productos = await this.getProducts()
         let product = productos.find(prod => prod.id === productID)
-        if (!product){
-            console.log(`Error: Product of id '${productID}' NOT FOUND.`)
-            return
-        }
+
         if ('id' in newFields) {
             delete newFields.id; // Ignora el cambio de id
         }

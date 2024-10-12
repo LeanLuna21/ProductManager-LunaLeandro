@@ -20,31 +20,31 @@ app.get("/productos", async (req, res)=>{
         let productos=await productManager.getProducts()
         // console.log(productos)
         res.status(200).send(productos)
-    } catch (error) {
-        res.status(400).send(`Error interno del server...!!!`)
+    } catch (err) {
+        res.status(500).send({ERROR:"Internal server error..."})
     }
 })
 
-app.get("/productos/:id", async (req, res)=>{
+app.get("/productos/:pid", async (req, res)=>{
     
-    // let id = Number(req.params.id)
-    let {id} = req.params
-    id = Number(id)
+    // let pid = Number(req.params.pid)
+    let {pid} = req.params
+    pid = Number(pid)
 
-    if (isNaN(id)){
+    if (isNaN(pid)){
         return res.status(400).send({ERROR:"product id must be number."})
     }
     
     try {
-        let producto=await productManager.getProductById(id)
+        let producto=await productManager.getProductById(pid)
         // console.log(producto)
         if (!producto){
-            return res.status(404).send({ERROR:`product of id ${id} NOT FOUND.`})
+            return res.status(404).send({ERROR:`product of id ${pid} NOT FOUND.`})
         }
 
         return res.status(200).send(producto)
 
-    } catch (error) {
+    } catch (err) {
         return res.status(500).send({ERROR:"Internal server error..."})
     }
 })
@@ -65,56 +65,56 @@ app.post("/productos", async (req, res)=>{
 
         await productManager.addProduct(title, description, code, price, status, stock, category, thumbnail)
 
-        return res.status(200).send({CONFIRMATION:"Product added successfully", product:req.body})
+        return res.status(201).send({CONFIRMATION:"Product added successfully"})
 
     } catch (err) {
-        res.status(400).send({Error:`Error interno del server...!!! ${err}`}) 
+        res.status(500).send({ERROR:"Internal server error..."}) 
     }
 
 })
 
-app.delete("/productos/:id", async (req, res)=>{
-    // let id = Number(req.params.id)
-    let {id} = req.params
-    id = Number(id)
+app.delete("/productos/:pid", async (req, res)=>{
+    // let pid = Number(req.params.pid)
+    let {pid} = req.params
+    pid = Number(pid)
 
-    if (isNaN(id)){
+    if (isNaN(pid)){
         return res.status(400).send({ERROR:"product id must be number."})
     }
     
     try {
-        let product = await productManager.getProductById(id)
+        let product = await productManager.getProductById(pid)
         if (!product){
-            return res.status(404).send({ERROR:`product of id ${id} NOT FOUND.`})
+            return res.status(404).send({ERROR:`product of id ${pid} NOT FOUND.`})
         }
-        await productManager.deleteProduct(id)
-        return res.status(200).send({CONFIRMATION:"Product deleted!",product: product})
+        await productManager.deleteProduct(pid)
+        return res.status(200).send({CONFIRMATION:"Product deleted!"})
 
-    } catch (error) {
+    } catch (err) {
         return res.status(500).send({ERROR:"Internal server error..."})
     }
 })
 
-app.put("/productos/:id", async (req, res)=>{
-    let {id} = req.params
-    id = Number(id)
+app.put("/productos/:pid", async (req, res)=>{
+    let {pid} = req.params
+    pid = Number(pid)
 
     let productos = await productManager.getProducts()
-    let product = productos.find(prod => prod.id === id)
+    let product = productos.find(prod => prod.id === pid)
     let fields = req.body
 
-    if (isNaN(id)){
+    if (isNaN(pid)){
         return res.status(400).send({ERROR:"product id must be number."})
     }
     if (!product){
-        return res.status(404).send({ERROR:`product of id ${id} NOT FOUND.`})
+        return res.status(404).send({ERROR:`product of id ${pid} NOT FOUND.`})
     }
     
     try {
-        await productManager.updateProduct(id, fields)
-        return res.status(200).send({CONFIRMATION:`Product ${id} updated!`})
+        await productManager.updateProduct(pid, fields)
+        return res.status(200).send({CONFIRMATION:`Product ${pid} updated!`})
     } catch (err) {
-        return res.status(500).send({ERROR:"Internal server error...", error:err})
+        return res.status(500).send({ERROR:"Internal server error..."})
     }
 
 })
