@@ -1,11 +1,15 @@
 import express from "express"
-import ProductManager from "./dao/ProductManager.js"
 import path from "path"
 import __dirname from "./utils.js"
+import ProductManager from "./dao/ProductManager.js"
+import CartManager from "./dao/CartManager.js"
 
 const PORT = 3000
-const filePath = path.join(__dirname,"data","productos.json")
-const productManager = new ProductManager(filePath)
+const productsFilePath = path.join(__dirname,"data","products.json")
+const productManager = new ProductManager(productsFilePath)
+const cartFilePath = path.join(__dirname,"data","carts.json")
+const cartManager = new CartManager(cartFilePath)
+
 const app = express()
 
 app.use(express.json()) 
@@ -118,6 +122,82 @@ app.put("/productos/:pid", async (req, res)=>{
     }
 
 })
+
+//////////// cart routes /////////////////////////////
+
+app.post("/cart", async (req, res)=>{
+    try {
+        await cartManager.createCart()
+        return res.status(200).send({CONFIRMATION:"CART CREATED."})
+    } catch (err) {
+        res.status(500).send({ERROR:"Internal server error..."})
+    }
+})
+
+app.get("/cart", async (req, res)=>{ 
+    try {
+        let cart = await cartManager.getCarts()
+        // console.log(productos)
+        res.status(200).send(cart)
+    } catch (err) {
+        res.status(500).send({ERROR:"Internal server error..."})
+    }
+})
+
+app.get("/cart/:cid", async (req, res)=>{
+    
+    let {cid} = req.params
+    let id = Number(cid)
+
+    if (isNaN(id)){
+        return res.status(400).send({ERROR:"product id must be number."})
+    }
+    
+    try {
+        let cart = await cartManager.getCartById(id)
+        if (!cart){
+            return res.status(404).send({ERROR:`cart of id ${cid} NOT FOUND.`})
+        }
+        res.status(200).send(cart)
+    } catch (err) {
+        res.status(500).send({ERROR:"Internal server error..."})
+    }
+})
+
+app.post("/cart/:cid/product/:pid", async (req, res)=>{
+    
+    let {cid, pid} = req.params
+    cid = Number(cid)
+    pid = Number(pid)
+
+    if (isNaN(cid)){
+        return res.status(400).send({ERROR:"cart id must be number."})
+    }
+    if (isNaN(pid)){
+        return res.status(400).send({ERROR:"product id must be number."})
+    }
+    
+    try {
+        let cart = await cartManager.getCartById(cid)
+        if (!cart){
+            return res.status(404).send({ERROR:`cart id ${cid} NOT FOUND.`})
+        }
+
+        let product = await productManager.getProductById(pid)
+        if (!product){
+            return res.status(404).send({ERROR:`product id ${pid} NOT FOUND.`})
+        }
+
+        await cartManager.addOrderToCart(cid, pid)
+        
+        return res.status(200).send({CONFIRMATION:"Order Saved."})
+        
+    } catch (err) {
+        return res.status(500).send({ERROR:"Internal server error..."})
+    }
+})
+
+
 
 app.listen(PORT, ()=>{
     console.log(`Server running at port ${PORT}`)
