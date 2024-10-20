@@ -2,9 +2,12 @@ import path from "path";
 import { Router } from 'express'; 
 import __dirname from "../utils.js";
 import CartManager from "../dao/CartManager.js"
+import ProductManager from "../dao/ProductManager.js"
 
 export const router=Router()
 
+const productsFilePath = path.join(__dirname,"data","products.json")
+const productManager = new ProductManager(productsFilePath)
 const cartFilePath = path.join(__dirname,"data","carts.json")
 const cartManager = new CartManager(cartFilePath)
 
@@ -63,11 +66,13 @@ router.post("/:cid/product/:pid", async (req, res)=>{
     
     try {
         let cart = await cartManager.getCartById(cid)
+        console.log(cart)
         if (!cart){
             return res.status(404).send({ERROR:`cart id ${cid} NOT FOUND.`})
         }
 
         let product = await productManager.getProductById(pid)
+        console.log(product)
         if (!product){
             return res.status(404).send({ERROR:`product id ${pid} NOT FOUND.`})
         }
