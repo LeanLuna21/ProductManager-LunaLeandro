@@ -1,9 +1,9 @@
 [
     {
         "id": 1,
-        "title": "producto 1 modificiado",
-        "description": "Este es un producto prueba",
-        "code": "abc123",
+        "title": "producto 1",
+        "description": "Prod 1 updated description",
+        "code": "abc234",
         "price": 200,
         "status": "true",
         "stock": "25",

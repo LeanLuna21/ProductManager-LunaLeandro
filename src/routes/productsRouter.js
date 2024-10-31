@@ -3,6 +3,9 @@ import { Router } from 'express';
 import __dirname from "../utils.js";
 import ProductManager from "../dao/ProductManager.js"
 
+//middleware para checkear el id que llega por parámetro
+import { idCheck } from '../middlewares/idCheck.js';
+
 export const router=Router()
 
 const productsFilePath = path.join(__dirname,"data","products.json")
@@ -19,21 +22,12 @@ router.get("/", async (req, res)=>{
     }
 })
 
-router.get("/:pid", async (req, res)=>{
-    
-    // let pid = Number(req.params.pid)
-    let {pid} = req.params
-    pid = Number(pid)
-
-    if (isNaN(pid)){
-        return res.status(400).send({ERROR:"product id must be number."})
-    }
-    
+router.get("/:pid", idCheck, async (req, res)=>{
     try {
-        let producto=await productManager.getProductById(pid)
+        let producto=await productManager.getProductById(req.pid)
         // console.log(producto)
         if (!producto){
-            return res.status(404).send({ERROR:`product of id ${pid} NOT FOUND.`})
+            return res.status(404).send({ERROR:`product of id ${req.pid} NOT FOUND.`})
         }
 
         return res.status(200).send(producto)
@@ -67,21 +61,13 @@ router.post("/", async (req, res)=>{
 
 })
 
-router.delete("/:pid", async (req, res)=>{
-    // let pid = Number(req.params.pid)
-    let {pid} = req.params
-    pid = Number(pid)
-
-    if (isNaN(pid)){
-        return res.status(400).send({ERROR:"product id must be number."})
-    }
-    
+router.delete("/:pid",idCheck, async (req, res)=>{
     try {
-        let product = await productManager.getProductById(pid)
+        let product = await productManager.getProductById(req.pid)
         if (!product){
-            return res.status(404).send({ERROR:`product of id ${pid} NOT FOUND.`})
+            return res.status(404).send({ERROR:`product of id ${req.pid} NOT FOUND.`})
         }
-        await productManager.deleteProduct(pid)
+        await productManager.deleteProduct(req.pid)
         return res.status(200).send({CONFIRMATION:"Product deleted!"})
 
     } catch (err) {
@@ -89,24 +75,18 @@ router.delete("/:pid", async (req, res)=>{
     }
 })
 
-router.put("/:pid", async (req, res)=>{
-    let {pid} = req.params
-    pid = Number(pid)
-
+router.put("/:pid",idCheck, async (req, res)=>{
     let productos = await productManager.getProducts()
-    let product = productos.find(prod => prod.id === pid)
+    let product = productos.find(prod => prod.id === req.pid)
     let fields = req.body
 
-    if (isNaN(pid)){
-        return res.status(400).send({ERROR:"product id must be number."})
-    }
     if (!product){
-        return res.status(404).send({ERROR:`product of id ${pid} NOT FOUND.`})
+        return res.status(404).send({ERROR:`product of id ${req.pid} NOT FOUND.`})
     }
     
     try {
-        await productManager.updateProduct(pid, fields)
-        return res.status(200).send({CONFIRMATION:`Product ${pid} updated!`})
+        await productManager.updateProduct(req.pid, fields)
+        return res.status(200).send({CONFIRMATION:`Product ${req.pid} updated!`})
     } catch (err) {
         return res.status(500).send({ERROR:"Internal server error..."})
     }
