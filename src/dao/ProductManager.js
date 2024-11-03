@@ -1,21 +1,18 @@
 import fs from "fs"
 
 export default class ProductManager{
-    #path = ""
-    constructor(filePath){
-        this.#path = filePath 
-    } 
-    
-    async getProducts(){
-        let check_file = fs.existsSync(this.#path)
+    static path = ""
+
+    static async getProducts(){
+        let check_file = fs.existsSync(this.path)
         if (check_file) {
-            return JSON.parse(await fs.promises.readFile(this.#path, {encoding:"utf-8"}))
+            return JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
         } else {
             return []
         }
     }
 
-    async addProduct(title, description, code, price, status, stock, category, thumbnail){
+    static async addProduct(title, description, code, price, status, stock, category, thumbnail){
         let productos = await this.getProducts()
         
         let id=1
@@ -27,18 +24,18 @@ export default class ProductManager{
 
         productos.push(newProduct)
         
-        await fs.promises.writeFile(this.#path, JSON.stringify(productos, null, 4))
+        await fs.promises.writeFile(this.path, JSON.stringify(productos, null, 4))
 
         return newProduct
     }
 
 
-    async #checkProductID(productID){
+    static async #checkProductID(productID){
         let productos = await this.getProducts()
         return productos.findIndex(prod => prod.id === productID)
     }
 
-    async getProductById(productID){
+    static async getProductById(productID){
         //buscar en el arreglo el producto que coincida con el id, si no, error::NOT FOUND
         let productos = await this.getProducts()
         let productIndex = await this.#checkProductID(productID)
@@ -48,7 +45,7 @@ export default class ProductManager{
         return productos[productIndex]
     }
 
-    async updateProduct(productID, newFields){
+    static async updateProduct(productID, newFields){
         let productos = await this.getProducts()
         let product = productos.find(prod => prod.id === productID)
 
@@ -57,16 +54,16 @@ export default class ProductManager{
         }
         Object.assign(product, newFields)
         
-        await fs.promises.writeFile(this.#path, JSON.stringify(productos, null, 4))
+        await fs.promises.writeFile(this.path, JSON.stringify(productos, null, 4))
 
         return product
     }
 
-    async deleteProduct(productID){
+    static async deleteProduct(productID){
         let productos = await this.getProducts()
         productos = productos.filter(prod => prod.id !== productID)
         
-        await fs.promises.writeFile(this.#path, JSON.stringify(productos, null, 4))
+        await fs.promises.writeFile(this.path, JSON.stringify(productos, null, 4))
 
         return productos
     }

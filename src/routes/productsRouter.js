@@ -9,12 +9,12 @@ import { idCheck } from '../middlewares/idCheck.js';
 export const router=Router()
 
 const productsFilePath = path.join(__dirname,"data","products.json")
-const productManager = new ProductManager(productsFilePath)
+ProductManager.path = productsFilePath
 
 
 router.get("/", async (req, res)=>{
     try {
-        let productos=await productManager.getProducts()
+        let productos=await ProductManager.getProducts()
         // console.log(productos)
         res.status(200).send(productos)
     } catch (err) {
@@ -24,7 +24,7 @@ router.get("/", async (req, res)=>{
 
 router.get("/:pid", idCheck, async (req, res)=>{
     try {
-        let producto=await productManager.getProductById(req.pid)
+        let producto=await ProductManager.getProductById(req.pid)
         // console.log(producto)
         if (!producto){
             return res.status(404).send({ERROR:`product of id ${req.pid} NOT FOUND.`})
@@ -45,13 +45,13 @@ router.post("/", async (req, res)=>{
     }
 
     try {
-        let productos = await productManager.getProducts()
+        let productos = await ProductManager.getProducts()
         // Validar que no se repita el campo “code”
         if (productos.find(prod => prod.code === code)){
             return res.status(400).send({ERROR:`Product code ${code} already exists.`})
         }
 
-        await productManager.addProduct(title, description, code, price, status, stock, category, thumbnail)
+        await ProductManager.addProduct(title, description, code, price, status, stock, category, thumbnail)
 
         return res.status(201).send({CONFIRMATION:"Product added successfully"})
 
@@ -63,11 +63,11 @@ router.post("/", async (req, res)=>{
 
 router.delete("/:pid",idCheck, async (req, res)=>{
     try {
-        let product = await productManager.getProductById(req.pid)
+        let product = await ProductManager.getProductById(req.pid)
         if (!product){
             return res.status(404).send({ERROR:`product of id ${req.pid} NOT FOUND.`})
         }
-        await productManager.deleteProduct(req.pid)
+        await ProductManager.deleteProduct(req.pid)
         return res.status(200).send({CONFIRMATION:"Product deleted!"})
 
     } catch (err) {
@@ -76,7 +76,7 @@ router.delete("/:pid",idCheck, async (req, res)=>{
 })
 
 router.put("/:pid",idCheck, async (req, res)=>{
-    let productos = await productManager.getProducts()
+    let productos = await ProductManager.getProducts()
     let product = productos.find(prod => prod.id === req.pid)
     let fields = req.body
 
@@ -85,7 +85,7 @@ router.put("/:pid",idCheck, async (req, res)=>{
     }
     
     try {
-        await productManager.updateProduct(req.pid, fields)
+        await ProductManager.updateProduct(req.pid, fields)
         return res.status(200).send({CONFIRMATION:`Product ${req.pid} updated!`})
     } catch (err) {
         return res.status(500).send({ERROR:"Internal server error..."})

@@ -1,27 +1,23 @@
 import fs from "fs"
 
 export default class CartManager{
-    #path = ""
-    #cart = []
-    constructor(filePath){
-        this.#path = filePath 
-    } 
+    static path = ""
 
-    async getCarts(){
-        let check_file = fs.existsSync(this.#path)
+    static async getCarts(){
+        let check_file = fs.existsSync(this.path)
         if (check_file) {
-            return JSON.parse(await fs.promises.readFile(this.#path, {encoding:"utf-8"}))
+            return JSON.parse(await fs.promises.readFile(this.path, {encoding:"utf-8"}))
         } else {
             return []
         }
     }
 
-    async #checkCartID(cartID){
+    static async #checkCartID(cartID){
         let carts = await this.getCarts()
         return carts.findIndex(cart => cart.id === cartID)
     }
 
-    async getCartById(cartID){
+    static async getCartById(cartID){
         let carts = await this.getCarts()
         let cartIndex = await this.#checkCartID(cartID)
         if (cartIndex === -1){
@@ -30,20 +26,22 @@ export default class CartManager{
         return carts[cartIndex]
     }
 
-    async createCart() {
+    static async createCart() {
+        let carts=await this.getCarts()
         let id=1
-        if(this.#cart.length>0){
-            id=this.#cart[this.#cart.length - 1].id + 1
+        if(carts.length>0){
+            id=Math.max(...carts.map(cart=>cart.id))+1
         }
+
         let orders = []
+        
+        carts.push({id:id,products:orders})
 
-        this.#cart.push({id:id,products:orders})
-
-        await fs.promises.writeFile(this.#path, JSON.stringify(this.#cart, null, 4))
-        return this.#cart
+        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 4))
+        return carts
     }
 
-    async addOrderToCart(cartID, productID){
+    static async addOrderToCart(cartID, productID){
         let carts = await this.getCarts()
         let cart = await this.getCartById(cartID)
         let quantity = 1
@@ -64,7 +62,7 @@ export default class CartManager{
         //cart.products.product === productoID ---> cart.products.quantity += 1
         carts[cartID-1] = cart
         
-        await fs.promises.writeFile(this.#path, JSON.stringify(carts, null, 4))
+        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 4))
         return
     }
 }

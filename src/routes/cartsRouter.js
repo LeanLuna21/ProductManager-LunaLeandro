@@ -7,14 +7,14 @@ import ProductManager from "../dao/ProductManager.js"
 export const router=Router()
 
 const productsFilePath = path.join(__dirname,"data","products.json")
-const productManager = new ProductManager(productsFilePath)
+ProductManager.path=productsFilePath
 const cartFilePath = path.join(__dirname,"data","carts.json")
-const cartManager = new CartManager(cartFilePath)
+CartManager.path=cartFilePath
 
 
 router.post("/", async (req, res)=>{
     try {
-        await cartManager.createCart()
+        await CartManager.createCart()
         return res.status(200).send({CONFIRMATION:"CART CREATED."})
     } catch (err) {
         res.status(500).send({ERROR:"Internal server error..."})
@@ -23,7 +23,7 @@ router.post("/", async (req, res)=>{
 
 router.get("/", async (req, res)=>{ 
     try {
-        let cart = await cartManager.getCarts()
+        let cart = await CartManager.getCarts()
         // console.log(productos)
         res.status(200).send(cart)
     } catch (err) {
@@ -41,7 +41,7 @@ router.get("/:cid", async (req, res)=>{
     }
     
     try {
-        let cart = await cartManager.getCartById(id)
+        let cart = await CartManager.getCartById(id)
         if (!cart){
             return res.status(404).send({ERROR:`cart of id ${cid} NOT FOUND.`})
         }
@@ -65,19 +65,19 @@ router.post("/:cid/product/:pid", async (req, res)=>{
     }
     
     try {
-        let cart = await cartManager.getCartById(cid)
+        let cart = await CartManager.getCartById(cid)
         console.log(cart)
         if (!cart){
             return res.status(404).send({ERROR:`cart id ${cid} NOT FOUND.`})
         }
 
-        let product = await productManager.getProductById(pid)
+        let product = await ProductManager.getProductById(pid)
         console.log(product)
         if (!product){
             return res.status(404).send({ERROR:`product id ${pid} NOT FOUND.`})
         }
 
-        await cartManager.addOrderToCart(cid, pid)
+        await CartManager.addOrderToCart(cid, pid)
         
         return res.status(200).send({CONFIRMATION:"Order Saved."})
         
