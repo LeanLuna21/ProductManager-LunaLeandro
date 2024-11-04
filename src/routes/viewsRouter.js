@@ -9,15 +9,24 @@ CartManager.path=__dirname+"\\data"+"\\carts.json"
 export const router=Router()
 
 router.get('/',(req,res)=>{
-    console.log(__dirname);
-    console.log(ProductManager.path);
-    console.log(CartManager.path);
     res.render("home")
 })
 
 router.get('/products', async(req, res)=>{
-    let productos= await ProductManager.getProducts()
-
-    res.render("index", {productos})
+    try {
+        let productos= await ProductManager.getProducts()
+        res.render("index", {productos})
+    } catch (error) {
+        res.status(500).send({ERROR:"Internal server error..."}) 
+    }
+ 
 })
 
+router.get('/realtimeproducts', async(req, res)=>{
+    try {
+        let productos= await ProductManager.getProducts()
+        res.render("realTimeProducts", {productos})
+    } catch (error) {
+        res.status(500).send({ERROR:"Internal server error..."}) 
+    }
+})

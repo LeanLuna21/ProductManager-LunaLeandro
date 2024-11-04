@@ -1,8 +1,8 @@
-
 {{>menu}}
-
-{{#each productos}}
+<ul>
+    {{#each productos}}
     <li>
-        {{title}}
+        {{title}} | ${{price}} | {{description}}
     </li>
-{{/each}}
+    {{/each}}
+</ul>
