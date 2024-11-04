@@ -2,8 +2,19 @@
     {
         "id": 1,
         "title": "producto 1",
-        "description": "Prod 1 updated description",
-        "code": "abc234",
+        "description": "Prod 1 description",
+        "code": "abc123",
+        "price": 200,
+        "status": "true",
+        "stock": "25",
+        "category": "categoryA",
+        "thumbnail": "Sin imagen"
+    },
+    {
+        "id": 2,
+        "title": "producto 2",
+        "description": "Prod 2 description updated",
+        "code": "abc123",
         "price": 200,
         "status": "true",
         "stock": "25",
