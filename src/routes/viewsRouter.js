@@ -30,3 +30,11 @@ router.get('/realtimeproducts', async(req, res)=>{
         res.status(500).send({ERROR:"Internal server error..."}) 
     }
 })
+
+router.get('/addproducts', async(req, res)=>{
+    try {
+        res.render("addProductForm")
+    } catch (error) {
+        res.status(500).send({ERROR:"Internal server error..."}) 
+    }
+})

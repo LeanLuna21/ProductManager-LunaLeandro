@@ -9,5 +9,27 @@
         "stock": "25",
         "category": "categoryA",
         "thumbnail": "Sin imagen"
+    },
+    {
+        "id": 2,
+        "title": "producto 2",
+        "description": "Prod 2 description",
+        "code": "abc234",
+        "price": 200,
+        "status": "true",
+        "stock": "25",
+        "category": "categoryA",
+        "thumbnail": "Sin imagen"
+    },
+    {
+        "id": 3,
+        "title": "prod 3",
+        "description": "product 3 desc",
+        "code": "abc599",
+        "price": "500",
+        "status": "True",
+        "stock": "5",
+        "category": "G",
+        "thumbnail": "Sin Imagen"
     }
 ]

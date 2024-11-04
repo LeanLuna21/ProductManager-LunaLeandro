@@ -52,6 +52,7 @@ router.post("/", async (req, res)=>{
         let newProduct = await ProductManager.addProduct(title, description, code, price, status, stock, category, thumbnail)
         req.io.emit("newProduct",newProduct)
 
+        // res.render("home")
         return res.status(201).send({CONFIRMATION:"Product added successfully"})
 
     } catch (err) {
