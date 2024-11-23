@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
     }
     try {
         let productos = await ProductManager.getProducts()
-        let existe = productos.find(prod => prod.code === code)
+        let existe = productos.docs.find(prod => prod.code === code)
         if (existe) {
             res.setHeader('Content-Type', 'application/json');
             return res.status(400).json({ error: `Ya existe un prod con codigo ${code}` })
