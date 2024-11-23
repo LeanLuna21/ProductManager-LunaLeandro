@@ -1,0 +1,3 @@
+leandrolunabackend - backend1Coder
+
+mongodb+srv://leandrolunabackend:backend1Coder@cluster0.hdu0e.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

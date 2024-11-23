@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import ProductManager from '../dao/ProductMongoManager.js';
 //middleware para checkear el id que llega por parámetro
-import { idCheck } from '../middlewares/idCheck.js';
+import { pidCheck } from '../middlewares/idCheck.js';
 
 import { isValidObjectId } from 'mongoose';
 
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 
 })
 
-router.get("/:pid", idCheck, async (req, res) => {
+router.get("/:pid", pidCheck, async (req, res) => {
     if (!isValidObjectId(req.pid)) {
         res.setHeader('Content-Type', 'application/json');
         return res.status(400).json({ error: `Invalid Product ID!` })
@@ -57,12 +57,12 @@ router.post("/", async (req, res) => {
         return res.status(201).json({ newProduct })
 
     } catch (err) {
-        res.status(500).send({ ERROR: `${err.message}` })
+        return res.status(500).send({ ERROR: `${err.message}` })
     }
 
 })
 
-router.put("/:pid", idCheck, async (req, res) => {
+router.put("/:pid", pidCheck, async (req, res) => {
     if (!isValidObjectId(req.pid)) {
         res.setHeader('Content-Type', 'application/json');
         return res.status(400).json({ error: `Invalid Product ID!` })
@@ -85,7 +85,7 @@ router.put("/:pid", idCheck, async (req, res) => {
 }
 )
 
-router.delete("/:pid", idCheck, async (req, res) => {
+router.delete("/:pid", pidCheck, async (req, res) => {
     if (!isValidObjectId(req.pid)) {
         res.setHeader('Content-Type', 'application/json');
         return res.status(400).json({ error: `Invalid Product ID!` })
@@ -101,7 +101,7 @@ router.delete("/:pid", idCheck, async (req, res) => {
         return res.status(200).send({ CONFIRMATION: "Product deleted!" })
         
     } catch (err) {
-        return res.status(500).send({ ERROR: "Internal server error..." })
+        return res.status(500).send({ ERROR: `${err.message}` })
     }
 })
 
