@@ -7,26 +7,18 @@ export default class ProductManager {
     }
 
     static async addProduct(prod = {}) {
-        let newProduct = await productosModelo.create(prod)
-        return newProduct.toJSON()
+        return await productosModelo.create(prod)
     }
 
     static async getProductById(productID) {
-        let product = await productosModelo.findOne({ id: productID })
-        if (!product) {
-            return
-        }
-        return product
+        return await productosModelo.findById(productID)
     }
 
     static async updateProduct(productID, newFields) {
-        if ('id' in newFields) {
-            delete newFields.id; // Ignora el cambio de id
-        }
-        return await productosModelo.findOneAndUpdate({ id:productID }, newFields, { new: true })
+        return await productosModelo.findOneAndUpdate({ _id:productID }, newFields, { new: true })
     }
 
     static async deleteProduct(productID){
-       return await productosModelo.findOneAndDelete({ id:productID })
+       return await productosModelo.findOneAndDelete({ _id:productID })
     }
 }

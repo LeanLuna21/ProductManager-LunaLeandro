@@ -2,78 +2,58 @@ import { carritosModelo } from "./models/carritoModelo.js"
 
 export default class CartManager {
     static async getCarts() {
-        return await carritosModelo.find().lean()
+        return await carritosModelo.find()
     }
 
     static async getCartById(cartID) {
-        let cart = await carritosModelo.findOne({ id: cartID })
-        if (!cart) {
-            return
-        }
-        return cart
+        return await carritosModelo.findById(cartID)
     }
 
     static async createCart() {
-        let carts = await this.getCarts()
-        let id = 1
-        if (carts.length > 0) {
-            id = Math.max(...carts.map(cart => cart.id)) + 1
-        }
         let orders = []
-        let cart = { id: id, products: orders }
-        let newCart = await carritosModelo.create(cart)
-
-        return newCart.toJSON()
+        let cart = { products: orders }
+        return await carritosModelo.create(cart)
     }
 
-    static async addOrderToCart(cartID, productID) {
-        let cart = await this.getCartById(cartID)
-        let quantity = 1
-
-        let prodInCart = cart.products.find(prod => prod.product === productID)
-        if (prodInCart) {
+    static async addOrderToCart(cart, product) {
+        if (cart.products.find(prod => prod.product.equals(product._id))) {
             cart.products.forEach(prod => {
-                if (prod.product === productID) {
+                if (prod.product.equals(product._id)) {
                     ++prod.quantity
                 }
-            });
-        } else {
+            })
+        }
+        else {
             cart.products.push(
                 {
-                    product: productID,
-                    quantity: quantity
+                    product: product._id,
+                    quantity: 1
                 }
             )
         }
-        return await carritosModelo.findOneAndUpdate({ id: cartID }, cart, { new: true })
+        return await carritosModelo.findOneAndUpdate({ _id: cart._id }, cart, { new: true })
     }
 
-    static async updateCartProduct(cartID,productID,quantity) {
-        let cart = await this.getCartById(cartID)
-        let prodIndex = cart.products.findIndex(p => p.product === productID)
+    static async updateCartProduct(cart, productID, quantity) {
+        let prodIndex = cart.products.findIndex(prod => prod.product.equals(productID))
 
         cart.products[prodIndex].quantity = quantity
-                                                        // $set -> operador para  reemplazar el valor de un campo con el valor especificado 
-        await carritosModelo.findOneAndUpdate({ id: cartID }, { $set: { products: cart.products } }, { new: true })
+        // $set -> operador para  reemplazar el valor de un campo con el valor especificado 
+        await carritosModelo.findByIdAndUpdate(cart._id, { $set: { products: cart.products } }, { new: true })
     }
 
     static async emptyCart(cartID) {
-        let cart = this.getCartById(cartID)
-        cart.products = []
-        await carritosModelo.updateOne({ id: cartID }, cart, { new: true })
-        return cart
+        return await carritosModelo.findByIdAndUpdate(cartID, {$set: { products: [] }}, { new: true })
     }
 
-    static async removeProduct(cartID, productID) {
-        let cart = await this.getCartById(cartID)
-
-        let prodIndex = cart.products.findIndex(p => p.product === productID)
+    static async removeProduct(cart, productID) {
+        let prodIndex = cart.products.findIndex(p => p.product.equals(productID))
         if (prodIndex === -1) {
-            return 
+            return
         }
         cart.products.splice(prodIndex, 1)
-                                                        // $set -> operador para  reemplazar el valor de un campo con el valor especificado 
-        await carritosModelo.findOneAndUpdate({ id: cartID }, { $set: { products: cart.products } }, { new: true })
+                                            // $set -> operador para  reemplazar el valor de un campo con el valor especificado 
+        return await carritosModelo.findByIdAndUpdate(cart._id, { $set: { products: cart.products } }, { new: true })
     }
 }
 

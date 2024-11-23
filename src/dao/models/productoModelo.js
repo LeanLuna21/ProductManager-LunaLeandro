@@ -4,11 +4,6 @@ const productosColeccion = 'productos'; //nombre de la coleccion en la DB
 
 const productoEsquema = new Schema(
     {
-        id: {
-            type: Number,
-            unique: true,
-            required: true
-        },
         title: {
             type: String,
             required: [true, `El nombre del producto es obligatorio`]
@@ -43,7 +38,8 @@ const productoEsquema = new Schema(
         }
     },
     {
-        timestamps: true
+        timestamps: true,
+        strict: true
     }
 );
 

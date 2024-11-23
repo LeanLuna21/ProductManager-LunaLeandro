@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import ProductManager from '../dao/ProductMongoManager.js';
-//middleware para checkear el id que llega por parámetro
-import { pidCheck } from '../middlewares/idCheck.js';
 
 import { isValidObjectId } from 'mongoose';
 
@@ -19,15 +17,16 @@ router.get('/', async (req, res) => {
 
 })
 
-router.get("/:pid", pidCheck, async (req, res) => {
-    if (!isValidObjectId(req.pid)) {
+router.get("/:pid", async (req, res) => {
+    let {pid} = req.params
+    if (!isValidObjectId(pid)) {
         res.setHeader('Content-Type', 'application/json');
         return res.status(400).json({ error: `Invalid Product ID!` })
     }
     try {
-        let producto = await ProductManager.getProductById(req.pid)
+        let producto = await ProductManager.getProductById(pid)
         if (!producto) {
-            return res.status(404).send({ ERROR: `product of id ${req.pid} NOT FOUND.` })
+            return res.status(404).send({ ERROR: `product of id ${pid} NOT FOUND.` })
         }
         return res.status(200).json(producto)
 
@@ -49,14 +48,10 @@ router.post("/", async (req, res) => {
             res.setHeader('Content-Type', 'application/json');
             return res.status(400).json({ error: `Ya existe un prod con codigo ${code}` })
         }
-        let id = 1
-        if(productos.length>0){
-            id=productos[productos.length - 1].id + 1
-        }
-        let newProduct = { id, title, description, code, price, status, stock, category, thumbnail }
-        await ProductManager.addProduct(newProduct)
-        req.io.emit("newProduct", newProduct)
-        return res.status(201).json({ newProduct })
+        let newProduct = { title, description, code, price, status, stock, category, thumbnail }
+        let productAdded = await ProductManager.addProduct(newProduct)
+        req.io.emit("newProduct", productAdded)
+        return res.status(201).json({ productAdded })
 
     } catch (err) {
         return res.status(500).send({ ERROR: `${err.message}` })
@@ -64,21 +59,22 @@ router.post("/", async (req, res) => {
 
 })
 
-router.put("/:pid", pidCheck, async (req, res) => {
-    if (!isValidObjectId(req.pid)) {
+router.put("/:pid", async (req, res) => {
+    let {pid} = req.params
+    if (!isValidObjectId(pid)) {
         res.setHeader('Content-Type', 'application/json');
         return res.status(400).json({ error: `Invalid Product ID!` })
     }
-    let product = await ProductManager.getProductById(req.pid)
+    let product = await ProductManager.getProductById(pid)
     if (!product) {
-        return res.status(404).send({ ERROR: `product of id ${req.pid} NOT FOUND.` })
+        return res.status(404).send({ ERROR: `product of id ${pid} NOT FOUND.` })
     }
 
     let fields = req.body
 
     try {
-        await ProductManager.updateProduct(req.pid, fields)
-        return res.status(200).send({ CONFIRMATION: `Product ${req.pid} updated!` })
+        let product_u = await ProductManager.updateProduct(pid, fields)
+        return res.status(200).json({ CONFIRMATION: `Product ${pid} updated!`, prod_updated:product_u })
 
     } catch (err) {
         return res.status(500).send({ ERROR: `${err.message}` })
@@ -87,20 +83,21 @@ router.put("/:pid", pidCheck, async (req, res) => {
 }
 )
 
-router.delete("/:pid", pidCheck, async (req, res) => {
-    if (!isValidObjectId(req.pid)) {
+router.delete("/:pid", async (req, res) => {
+    let {pid} = req.params
+    if (!isValidObjectId(pid)) {
         res.setHeader('Content-Type', 'application/json');
         return res.status(400).json({ error: `Invalid Product ID!` })
     }
     try {
-        let product = await ProductManager.getProductById(req.pid)
+        let product = await ProductManager.getProductById(pid)
         if (!product) {
-            return res.status(404).send({ ERROR: `product of id ${req.pid} NOT FOUND.` })
+            return res.status(404).send({ ERROR: `product of id ${pid} NOT FOUND.` })
         }
-        await ProductManager.deleteProduct(req.pid)
+        await ProductManager.deleteProduct(pid)
         req.io.emit("deleteProduct", product)
 
-        return res.status(200).send({ CONFIRMATION: "Product deleted!" })
+        return res.status(200).json({ CONFIRMATION: "Product deleted!", prod_deleted:product })
 
     } catch (err) {
         return res.status(500).send({ ERROR: `${err.message}` })
