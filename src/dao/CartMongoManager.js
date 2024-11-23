@@ -2,11 +2,15 @@ import { carritosModelo } from "./models/carritoModelo.js"
 
 export default class CartManager {
     static async getCarts() {
-        return await carritosModelo.find()
+        return await carritosModelo.find().populate({
+            path: "products.product"
+        }).lean()
     }
 
     static async getCartById(cartID) {
-        return await carritosModelo.findById(cartID)
+        return await carritosModelo.findById(cartID).populate({
+            path: "products.product"
+        }).lean()
     }
 
     static async createCart() {

@@ -8,7 +8,7 @@ import { router as productsRouter}  from "./routes/productsMongoRouter.js"
 import { router as cartsRouter } from "./routes/cartsMongoRouter.js"
 // import { router as viewsRouter } from "./routes/viewsRouter.js"
 import { router as viewsRouter } from "./routes/viewsMongoRouter.js"
-import { conectarDB } from './connectDB.js';
+import { conectarDB, populateDB } from './connectDB.js';
 import { config } from './config/dbconfig.js';
 
 const PORT = 3000
@@ -45,3 +45,6 @@ const server = app.listen(PORT, () => {
 io = new Server(server) 
 
 conectarDB(config.MONGO_URI, config.DB_NAME)
+
+// llenamos la bd con productos para probar paginacion
+// populateDB(config.MONGO_URI, config.DB_NAME)

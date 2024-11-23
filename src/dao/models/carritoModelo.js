@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose'
+import paginate from "mongoose-paginate-v2"
 
 const carritoEsquema = new Schema(
     {
@@ -18,14 +19,10 @@ const carritoEsquema = new Schema(
     },
     {
         timestamps: true,
-        strict: true
+        strictPopulate: false
+        // strict: true
     })
 
-export const carritosModelo = model("carritos", carritoEsquema);
+// carritoEsquema.plugin(paginate)
 
-carritoEsquema.pre("find", function(){
-    this.populate("products.product").lean()
-})
-carritoEsquema.pre("findOne", function(){
-    this.populate("products.product").lean()
-})
+export const carritosModelo = model("carritos", carritoEsquema);

@@ -1,4 +1,5 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose'
+import paginate from "mongoose-paginate-v2"
 
 const productosColeccion = 'productos'; //nombre de la coleccion en la DB
 
@@ -39,8 +40,10 @@ const productoEsquema = new Schema(
     },
     {
         timestamps: true,
-        strict: true
+        // strict: true
     }
 );
+
+productoEsquema.plugin(paginate)
 
 export const productosModelo = model(productosColeccion, productoEsquema);

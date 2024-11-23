@@ -1,11 +1,32 @@
 {{>menu}}
+
+<h2>IRT PRODUCTS:</h2>
+<hr>
+
 <ul id="productos">
     {{#each productos}}
         <li id={{code}}>
-            {{title}} - {{price}} 
+            {{title}} -- ${{price}} 
         </li>
     {{/each}}
 </ul>
+
+<a href="/realtimeproducts?page=1">Pág.1</a>
+
+{{#if hasPrevPage}}
+    <a href="/realtimeproducts?page={{prevPage}}">Pág.Prev.</a>
+{{else}}
+    <a href="/realtimeproducts?page={{prevPage}}" class="disabled">Pág.Prev.</a>
+{{/if}}
+
+{{#if hasNextPage}}
+    <a href="/realtimeproducts?page={{nextPage}}">Pág.Sig.</a>
+{{else}}
+    <a href="/realtimeproducts?page={{nextPage}}" class="disabled">Pág.Sig.</a>
+{{/if}}
+
+
+<a href="/realtimeproducts?page={{totalPages}}">Ult.Pág</a>
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/index.js"></script>
