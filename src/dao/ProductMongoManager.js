@@ -12,7 +12,6 @@ export default class ProductManager {
     }
 
     static async getProductById(productID) {
-        //buscar en el arreglo el producto que coincida con el id, si no, error::NOT FOUND
         let product = await productosModelo.findOne({ id: productID })
         if (!product) {
             return

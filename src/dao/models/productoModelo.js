@@ -24,7 +24,8 @@ const productoEsquema = new Schema(
             type: Number
         },
         status: {
-            type: Boolean
+            type: Boolean,
+            default: true    
         },
         stock: {
             type: Number

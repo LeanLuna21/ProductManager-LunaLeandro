@@ -37,10 +37,9 @@ router.get("/:pid", pidCheck, async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
-    let { id, title, description, code, price, status, stock, category, thumbnail } = req.body
+    let {title, description, code, price, status, stock, category, thumbnail } = req.body
     // Validar que ninguno de los campos llegue vacio
-    console.log(title, description, code, price, status, stock, category, thumbnail)
-    if (!title || !description || !code || !price || !status || !stock || !category) {
+    if (!title || !description || !code || !price || !stock || !category) {
         return res.status(400).send({ ERROR: `Missing required fields. ${req.params}` })
     }
     try {
@@ -50,7 +49,10 @@ router.post("/", async (req, res) => {
             res.setHeader('Content-Type', 'application/json');
             return res.status(400).json({ error: `Ya existe un prod con codigo ${code}` })
         }
-
+        let id = 1
+        if(productos.length>0){
+            id=productos[productos.length - 1].id + 1
+        }
         let newProduct = { id, title, description, code, price, status, stock, category, thumbnail }
         await ProductManager.addProduct(newProduct)
         req.io.emit("newProduct", newProduct)
@@ -76,7 +78,7 @@ router.put("/:pid", pidCheck, async (req, res) => {
 
     try {
         await ProductManager.updateProduct(req.pid, fields)
-        return res.status(200).send({CONFIRMATION:`Product ${req.pid} updated!`})
+        return res.status(200).send({ CONFIRMATION: `Product ${req.pid} updated!` })
 
     } catch (err) {
         return res.status(500).send({ ERROR: `${err.message}` })
@@ -97,9 +99,9 @@ router.delete("/:pid", pidCheck, async (req, res) => {
         }
         await ProductManager.deleteProduct(req.pid)
         req.io.emit("deleteProduct", product)
-        
+
         return res.status(200).send({ CONFIRMATION: "Product deleted!" })
-        
+
     } catch (err) {
         return res.status(500).send({ ERROR: `${err.message}` })
     }

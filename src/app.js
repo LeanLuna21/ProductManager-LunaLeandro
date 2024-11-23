@@ -6,7 +6,8 @@ import __dirname from "./utils.js"
 import { router as productsRouter}  from "./routes/productsMongoRouter.js"
 // import { router as cartsRouter } from "./routes/cartsRouter.js"
 import { router as cartsRouter } from "./routes/cartsMongoRouter.js"
-import { router as viewsRouter } from "./routes/viewsRouter.js"
+// import { router as viewsRouter } from "./routes/viewsRouter.js"
+import { router as viewsRouter } from "./routes/viewsMongoRouter.js"
 import { conectarDB } from './connectDB.js';
 import { config } from './config/dbconfig.js';
 
