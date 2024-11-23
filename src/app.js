@@ -1,11 +1,13 @@
 import express from "express"
 import { engine } from "express-handlebars"
 import { Server } from "socket.io"
-
 import __dirname from "./utils.js"
-import { router as productsRouter } from "./routes/productsRouter.js"
+// import { router as productsRouter } from "./routes/productsRouter.js"
+import { router as productsRouter}  from "./routes/productsMongoRouter.js"
 import { router as cartsRouter } from "./routes/cartsRouter.js"
 import { router as viewsRouter } from "./routes/viewsRouter.js"
+import { conectarDB } from './connectDB.js';
+import { config } from './config/dbconfig.js';
 
 const PORT = 3000
 let io
@@ -39,3 +41,5 @@ const server = app.listen(PORT, () => {
 })
 
 io = new Server(server) 
+
+conectarDB(config.MONGO_URI, config.DB_NAME)
