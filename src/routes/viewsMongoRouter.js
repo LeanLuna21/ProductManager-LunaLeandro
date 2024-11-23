@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
 
 router.get('/products', async (req, res) => {
     try {
-        let {page, limit} = req.query
-        let {docs:productos, totalPages, hasNextPage, hasPrevPage, prevPage, nextPage} = await ProductManager.getProducts(page, limit)
+        let {page, limit, category, sort} = req.query
+        let {docs:productos, totalPages, hasNextPage, hasPrevPage, prevPage, nextPage} = await ProductManager.getProducts(page, limit, category, sort)
         return res.render("index",
             {
                 productos,
@@ -23,7 +23,7 @@ router.get('/products', async (req, res) => {
                 nextPage
             })
     } catch (error) {
-        return res.status(500).send({ ERROR: `${err.message}` })
+        return res.status(500).send({ ERROR: `${error.message}` })
     }
 })
 
@@ -41,7 +41,7 @@ router.get('/realtimeproducts', async (req, res) => {
             nextPage
         })
     } catch (error) {
-        return res.status(500).send({ ERROR: `${err.message}` })
+        return res.status(500).send({ ERROR: `${error.message}` })
     }
 })
 
@@ -49,6 +49,6 @@ router.get('/addproducts', async (req, res) => {
     try {
         return res.render("addProductForm")
     } catch (error) {
-        return res.status(500).send({ ERROR: `${err.message}` })
+        return res.status(500).send({ ERROR: `${error.message}` })
     }
 })
